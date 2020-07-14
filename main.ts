@@ -664,10 +664,6 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.purpleSwitchDown, functio
     info.changeLifeBy(3)
     Boss_mode = 1
 })
-function Make_wall_2_dungeon_2 (x: number, num2: number) {
-    tiles.setTileAt(tiles.getTileLocation(x, num2), sprites.dungeon.greenOuterWest1)
-    tiles.setWallAt(tiles.getTileLocation(x, num2), true)
-}
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.ghost, function (sprite, otherSprite) {
     otherSprite.destroy(effects.warmRadial, 500)
     scene.cameraShake(15, 500)
@@ -685,32 +681,15 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
     otherSprite.destroy(effects.ashes, 500)
     scene.cameraShake(15, 500)
 })
-function Make_ruin (x: number, y: number) {
-    Ruin = sprites.create(img`
-c c c c c c c c c c c c c c c c 
-c 2 2 2 2 2 2 2 2 2 2 2 2 2 2 c 
-c 2 c c c c c c c c c c c c 2 c 
-c 2 c 2 2 2 2 2 2 2 2 c 2 c 2 c 
-c 2 c 2 2 2 c c c 2 c c 2 c 2 c 
-c 2 c 2 2 2 2 2 c 2 c 2 2 c 2 c 
-c 2 c 2 2 c c 2 c c c c 2 c 2 c 
-c 2 c 2 2 2 c c c c 2 c 2 c 2 c 
-c 2 c 2 2 2 c 2 2 2 c c 2 c 2 c 
-c 2 c 2 c c c c 2 2 c c 2 c 2 c 
-c 2 c 2 2 2 2 c 2 2 c 2 2 c 2 c 
-c 2 c 2 2 2 2 c c 2 2 2 2 c 2 c 
-c 2 c 2 2 2 2 2 2 2 2 2 2 c 2 c 
-c 2 c c c c c c c c c c c c 2 c 
-c 2 2 2 2 2 2 2 2 2 2 2 2 2 2 c 
-c c c c c c c c c c c c c c c c 
-`, SpriteKind.Ruin)
-    tiles.placeOnTile(Ruin, tiles.getTileLocation(x, y))
-}
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Ruin, function (sprite, otherSprite) {
     otherSprite.destroy(effects.coolRadial, 500)
     scene.cameraShake(15, 500)
     ruins += 1
 })
+function Make_wall_2_dungeon_2 (x: number, num2: number) {
+    tiles.setTileAt(tiles.getTileLocation(x, num2), sprites.dungeon.greenOuterWest1)
+    tiles.setWallAt(tiles.getTileLocation(x, num2), true)
+}
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (double == 1) {
         double_weapon = 1
@@ -1817,11 +1796,6 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.ghost, function (sprite, otherSp
     Enemy_2.destroy(effects.ashes, 500)
     scene.cameraShake(15, 500)
 })
-function Make_wall_1_dungeon_2 (x: number, y: number) {
-    tiles.setTileAt(tiles.getTileLocation(x, y), sprites.dungeon.greenOuterNorth0)
-    tiles.setWallAt(tiles.getTileLocation(x, y), true)
-    tiles.placeOnTile(Enemy3, tiles.getTileLocation(58, 24))
-}
 controller.right.onEvent(ControllerButtonEvent.Released, function () {
     animation.stopAnimation(animation.AnimationTypes.All, Zelda)
 })
@@ -1829,11 +1803,17 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.object, function (sprite, otherS
     otherSprite.destroy(effects.ashes, 500)
     scene.cameraShake(15, 500)
 })
+function Make_wall_1_dungeon_2 (x: number, y: number) {
+    tiles.setTileAt(tiles.getTileLocation(x, y), sprites.dungeon.greenOuterNorth0)
+    tiles.setWallAt(tiles.getTileLocation(x, y), true)
+    tiles.placeOnTile(Enemy3, tiles.getTileLocation(58, 24))
+}
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     direction = 1
-    animation.runImageAnimation(
-    Zelda,
-    [img`
+    if (wearing == 0) {
+        animation.runImageAnimation(
+        Zelda,
+        [img`
 . . . . . . . . . . . . . . . . 
 . . . . . . f f f f . . . . . . 
 . . . . f f e e e e f f . . . . 
@@ -1885,12 +1865,94 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
 . . . 4 e e f f f f f f e . . . 
 . . . . . . . . . f f f . . . . 
 `],
-    100,
-    true
-    )
+        100,
+        true
+        )
+    }
+    if (wearing == 1) {
+        animation.runImageAnimation(
+        Zelda,
+        [img`
+. . . . . . . . . . . . . . . . 
+. . . . . . f f f f . . . . . . 
+. . . . f f e e e e f f . . . . 
+. . . f e e e b b e e e f . . . 
+. . . f b b b 5 5 b b b f . . . 
+. . f f e 5 e 5 5 e 5 e f f . . 
+. . f e 5 b 5 b b b 5 b e f . . 
+. . f b b 5 b e e 5 5 b b f . . 
+. . f e 5 b b e e 5 b e e f . . 
+. f f e b b e e e b e e e f f . 
+. f f e e e e e e e e e e f f . 
+. . . f e e e e e e e e f . . . 
+. . . c f f f f f f f f b c . . 
+. . . b f c b c b c b d d b . . 
+. . . c f f f f f f c c b . . . 
+. . . . f f f . . . . . . . . . 
+`,img`
+. . . . . . f f f f . . . . . . 
+. . . . f f e e e e f f . . . . 
+. . . f e e e b b e e e f . . . 
+. . f f b b b 5 5 b b b f f . . 
+. . f f e 5 e 5 5 e 5 e f f . . 
+. . f e 5 b 5 b b 5 b 5 e f . . 
+. . f b b 5 5 e e 5 5 b b f . . 
+. f f e b 5 b e e b 5 b e f f . 
+. f e e b b e e e e b e e e f . 
+. . f e e e e e e e e e e f . . 
+. . . f e e e e e e e e f . . . 
+. . c b f f f f f f f f b c . . 
+. . b d f b c b c b c f d b . . 
+. . c b f c b c b c b f b c . . 
+. . . . . f f f f f f . . . . . 
+. . . . . f f . . f f . . . . . 
+`,img`
+. . . . . . . . . . . . . . . . 
+. . . . . . f f f f . . . . . . 
+. . . . f f e e e e f f . . . . 
+. . . f e e e b b e e e f . . . 
+. . . f b b b 5 5 b b b f . . . 
+. . f f e 5 e 5 5 e 5 e f f . . 
+. . f e b 5 b b b 5 b 5 e f . . 
+. . f b b 5 5 e e b 5 b b f . . 
+. . f e e b 5 e e b b 5 e f . . 
+. f f e e e b e e e b b e f f . 
+. f f e e e e e e e e e e f f . 
+. . . f e e e e e e e e f . . . 
+. . c b f f f f f f f f c . . . 
+. . b d d b c b c b c f b . . . 
+. . . b c b f f f f f f c . . . 
+. . . . . . . . . f f f . . . . 
+`],
+        100,
+        true
+        )
+    }
 })
+function Make_ruin (x: number, y: number) {
+    Ruin2 = sprites.create(img`
+c c c c c c c c c c c c c c c c 
+c 2 2 2 2 2 2 2 2 2 2 2 2 2 2 c 
+c 2 c c c c c c c c c c c c 2 c 
+c 2 c 2 2 2 2 2 2 2 2 c 2 c 2 c 
+c 2 c 2 2 2 c c c 2 c c 2 c 2 c 
+c 2 c 2 2 2 2 2 c 2 c 2 2 c 2 c 
+c 2 c 2 2 c c 2 c c c c 2 c 2 c 
+c 2 c 2 2 2 c c c c 2 c 2 c 2 c 
+c 2 c 2 2 2 c 2 2 2 c c 2 c 2 c 
+c 2 c 2 c c c c 2 2 c c 2 c 2 c 
+c 2 c 2 2 2 2 c 2 2 c 2 2 c 2 c 
+c 2 c 2 2 2 2 c c 2 2 2 2 c 2 c 
+c 2 c 2 2 2 2 2 2 2 2 2 2 c 2 c 
+c 2 c c c c c c c c c c c c 2 c 
+c 2 2 2 2 2 2 2 2 2 2 2 2 2 2 c 
+c c c c c c c c c c c c c c c c 
+`, SpriteKind.Ruin)
+    tiles.placeOnTile(Ruin2, tiles.getTileLocation(x, y))
+}
+let Ruin2: Sprite = null
 let projectile: Sprite = null
-let Ruin: Sprite = null
+let ruins = 0
 let direction = 0
 let statusbar = 0
 let armour: Sprite = null
@@ -1963,7 +2025,6 @@ Enemy1 = sprites.create(img`
 Boss_mode = 0
 wearing = 0
 E_health = 3
-let ruins = 0
 double_weapon = 0
 info.setLife(3)
 double = 0
@@ -2412,5 +2473,9 @@ forever(function () {
     }
     if (Boss_mode == 2) {
         Enemy3.follow(Zelda, 50)
+    }
+    if (wearing == 1) {
+        pause(20000)
+        info.changeLifeBy(1)
     }
 })
