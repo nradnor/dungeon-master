@@ -7,6 +7,7 @@ namespace SpriteKind {
     export const c = SpriteKind.create()
     export const object = SpriteKind.create()
     export const Ruin = SpriteKind.create()
+    export const obeject2 = SpriteKind.create()
 }
 namespace myTiles {
     //% blockIdentity=images._tile
@@ -52,9 +53,8 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.BOSS, function (sprite, othe
     E_health += -1
     scene.cameraShake(15, 500)
     pause(500)
-    if (E_health < 0) {
+    if (E_health == 0 && Boss_mode == 1) {
         otherSprite.destroy(effects.confetti, 500)
-        Boss_mode = 0
         Destroy_Wall(3, 34)
         Destroy_Wall(4, 34)
         Destroy_Wall(5, 34)
@@ -90,9 +90,36 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.BOSS, function (sprite, othe
         Double_Gun.say("Pick me up, I am the lost double gun of the dungeons and have the power to kill all evil, take me with a single A click!!!")
         double = 1
         tiles.placeOnTile(Double_Gun, tiles.getTileLocation(3, 50))
+        Boss_mode = 0
     }
-    if (Boss_mode < 2) {
-    	
+    if (E_health < 0 && Boss_mode == 2) {
+        Enemy3.destroy()
+        armour = sprites.create(img`
+. . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . 
+. . . . f 5 f 5 f 5 f 5 f 5 f . . . . . 
+. . . f c b c b c b c b c b c f . . . . 
+. . f c b c b c b c b c b c b c f . . . 
+. f c b c f f b c b c b f f c b c f . . 
+. 5 b c f . f c b c b c f . f c b 5 . . 
+. . 5 f . . f b c 5 c b f . . f 5 . . . 
+. . . . . . f c 5 5 5 c f . . . . . . . 
+. . . . . . f b c 5 c b f . . . . . . . 
+. . . . . . f c b c b c f . . . . . . . 
+. . . . . . f b c b c b f . . . . . . . 
+. . . . . . 9 f f f f f 9 . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . 
+`, SpriteKind.obeject2)
+        tiles.placeOnTile(armour, tiles.getTileLocation(56, 20))
+        armour.follow(Zelda)
+        Boss_mode = 0
+        wearing = 1
     }
 })
 function Destroy_Wall (x: number, y: number) {
@@ -308,13 +335,14 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.greenSwitchUp, function (
     Make_wall_1_dungeon_2(58, 34)
     Make_wall_1_dungeon_2(59, 34)
     Make_wall_1_dungeon_2(60, 34)
-    Boss_mode = 1
+    Boss_mode = 2
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     direction = 3
-    animation.runImageAnimation(
-    Zelda,
-    [img`
+    if (wearing == 0) {
+        animation.runImageAnimation(
+        Zelda,
+        [img`
 . . . . f f f f f f . . . . . . 
 . . . f 2 f e e e e f f . . . . 
 . . f 2 2 2 f e e e e f f . . . 
@@ -383,15 +411,93 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 . . f f f f f f f f f f . . . . 
 . . . f f f . . . f f . . . . . 
 `],
-    100,
-    true
-    )
+        100,
+        true
+        )
+    }
+    if (wearing == 1) {
+        animation.runImageAnimation(
+        Zelda,
+        [img`
+. . . . f f f f f f . . . . . . 
+. . . f 5 f e e e e f f . . . . 
+. . f 5 5 5 f e e e e f f . . . 
+. . f e e e e f f e e e f . . . 
+. f e b b b b e e f f f f . . . 
+. f b e f f f f b b b e f . . . 
+. f f f e e e f f f f f f f . . 
+. f e e 4 4 f b e 4 4 e f f . . 
+. . f e d d f 1 4 d 4 e e f . . 
+. . . f d d d d 4 e e e f . . . 
+. . . f e 4 4 4 e e f f . . . . 
+. . . f c b c b d d c . . . . . 
+. . . f b c b c d d b . . . . . 
+. . . f c b c f b c f . . . . . 
+. . . . f f f f f f . . . . . . 
+. . . . . . f f f . . . . . . . 
+`,img`
+. . . . . . . . . . . . . . . . 
+. . . . f f f f f f . . . . . . 
+. . . f 5 f e e e e f f . . . . 
+. . f 5 5 5 f e e e e f f . . . 
+. . f e e e e f f e e e f . . . 
+. f e b b b b e e f f f f . . . 
+. f b e f f f f b b b e f . . . 
+. f f f e e e f f f f f f f . . 
+. f e e 4 4 f b e 4 4 e f f . . 
+. . f e d d f 1 4 d 4 e e f . . 
+. . . f d d d e e e e e f . . . 
+. . . f c b c d d c f . . . . . 
+. . . f b c b d d b f . . . . . 
+. . f f c b c b c f f f . . . . 
+. . f f f f f f f f f f . . . . 
+. . . f f f . . . f f . . . . . 
+`,img`
+. . . . f f f f f f . . . . . . 
+. . . f 5 f e e e e f f . . . . 
+. . f 5 5 5 f e e e e f f . . . 
+. . f e e e e f f e e e f . . . 
+. f e b b b b e e f f f f . . . 
+. f b e f f f f b b b e f . . . 
+. f f f e e e f f f f f f f . . 
+. f e e 4 4 f b e 4 4 e f f . . 
+. . f e d d f 1 4 d 4 e e f . . 
+. . . f d d d d 4 e e e f . . . 
+. . . f e 4 4 4 e e f f . . . . 
+. . . f c b c b d d c . . . . . 
+. . . f b c b c d d b . . . . . 
+. . . f c b c f b c f . . . . . 
+. . . . f f f f f f . . . . . . 
+. . . . . . f f f . . . . . . . 
+`,img`
+. . . . . . . . . . . . . . . . 
+. . . . f f f f f f . . . . . . 
+. . . f 5 f e e e e f f . . . . 
+. . f 5 5 5 f e e e e f f . . . 
+. . f e e e e f f e e e f . . . 
+. f e b b b b e e f f f f . . . 
+. f b e f f f f b b b b f . . . 
+. f f f e e e f f f f f f f . . 
+. f e e 4 4 f b e 4 4 e f f . . 
+. . f e d d f 1 4 d 4 e e f . . 
+. . . f d d d d 4 e e e f . . . 
+. . . f c b c b c d d c . . . . 
+. . . f b c b c b d d b . . . . 
+. . f f c b c b f b c f . . . . 
+. . f f f f f f f f f f . . . . 
+. . . f f f . . . f f . . . . . 
+`],
+        100,
+        true
+        )
+    }
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     direction = 4
-    animation.runImageAnimation(
-    Zelda,
-    [img`
+    if (wearing == 0) {
+        animation.runImageAnimation(
+        Zelda,
+        [img`
 . . . . . . f f f f . . . . . . 
 . . . . f f f 2 2 f f f . . . . 
 . . . f f f 2 2 2 2 f f f . . . 
@@ -460,9 +566,86 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
 . . . . . f f f f f f f . . . . 
 . . . . . . . . . f f f . . . . 
 `],
-    100,
-    true
-    )
+        100,
+        true
+        )
+    }
+    if (wearing == 1) {
+        animation.runImageAnimation(
+        Zelda,
+        [img`
+. . . . . . f f f f . . . . . . 
+. . . . f f f 5 5 f f f . . . . 
+. . . f f f c c c c f f f . . . 
+. . f f f e e e e e e f f f . . 
+. . f f e 2 2 2 2 2 2 e e f . . 
+. . f e 2 f f f f f f 2 e f . . 
+. . f f f f e e e e f f f f . . 
+. f f e f b f 4 4 f b f e f f . 
+. f e e 4 1 f d d f 1 4 e e f . 
+. . f e e d d d d d d e e f . . 
+. . . f c b c b c b c b f . . . 
+. . c b f c b c b c b f b c . . 
+. . b d f b c b c b c f d b . . 
+. . c b f c b c b c b f b c . . 
+. . . . . f f f f f f . . . . . 
+. . . . . f f . . f f . . . . . 
+`,img`
+. . . . . . . . . . . . . . . . 
+. . . . . . f f f f . . . . . . 
+. . . . f f f 5 5 f f f . . . . 
+. . . f f f c c c c f f f . . . 
+. . f f f e e e e e e f f f . . 
+. . f f e 2 2 2 2 2 2 e e f . . 
+. f f e 2 f f f f f f 2 e f f . 
+. f f f f f e e e e f f f f f . 
+. . f e f b f 4 4 f b f e f . . 
+. . f e 4 1 f d d f 1 4 e f . . 
+. . . f e 4 d d d d 4 e f e . . 
+. . b e f b c b c e d d 4 e . . 
+. . b 4 f c b c b e d d e . . . 
+. . . . f b c b c f b b . . . . 
+. . . . f f f f f f f . . . . . 
+. . . . f f f . . . . . . . . . 
+`,img`
+. . . . . . f f f f . . . . . . 
+. . . . f f f 5 5 f f f . . . . 
+. . . f f f c c c c f f f . . . 
+. . f f f e e e e e e f f f . . 
+. . f f e 2 2 2 2 2 2 e e f . . 
+. . f e 2 f f f f f f 2 e f . . 
+. . f f f f e e e e f f f f . . 
+. f f e f b f 4 4 f b f e f f . 
+. f e e 4 1 f d d f 1 4 e e f . 
+. . f e e d d d d d d e e f . . 
+. . . f e e c b c b e e f . . . 
+. . b c f c b c b c b f c b . . 
+. . c d f b c b c b c f d c . . 
+. . b c f c b c b c b f c b . . 
+. . . . . f f f f f f . . . . . 
+. . . . . f f . . f f . . . . . 
+`,img`
+. . . . . . . . . . . . . . . . 
+. . . . . . f f f f . . . . . . 
+. . . . f f f 5 5 f f f . . . . 
+. . . f f f c c c c f f f . . . 
+. . f f f e e e e e e f f f . . 
+. . f e e 2 2 2 2 2 2 e f f . . 
+. f f e 2 f f f f f f 2 e f f . 
+. f f f f f e e e e f f f f f . 
+. . f e f b f 4 4 f b f e f . . 
+. . f e 4 1 f d d f 1 4 e f . . 
+. . e f e 4 d d d d 4 e f . . . 
+. . e b d d e c b c b f e b . . 
+. . . b d d e b c b c f 4 b . . 
+. . . . b b f c b c b f . . . . 
+. . . . . f f f f f f f . . . . 
+. . . . . . . . . f f f . . . . 
+`],
+        100,
+        true
+        )
+    }
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.purpleSwitchDown, function (sprite, location) {
     tiles.placeOnTile(Zelda, tiles.getTileLocation(3, 35))
@@ -494,6 +677,9 @@ controller.left.onEvent(ControllerButtonEvent.Released, function () {
 })
 controller.down.onEvent(ControllerButtonEvent.Released, function () {
     animation.stopAnimation(animation.AnimationTypes.All, Zelda)
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.obeject2, function (sprite, otherSprite) {
+    otherSprite.destroy(effects.bubbles, 500)
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     otherSprite.destroy(effects.ashes, 500)
@@ -1271,6 +1457,26 @@ f f f . f e 4 e d d 4 f . . . .
     }
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.doorOpenNorth, function (sprite, location) {
+    E_health = 3
+    Enemy3 = sprites.create(img`
+. . . . . 1 1 1 1 1 1 . . . . . 
+. . . . . 1 f f f f 1 . . . . . 
+. . . . . 1 f d d f 1 . . . . . 
+. . . . . 1 d d d d 1 . . . . . 
+. . . . . 1 1 f f 1 1 . . . . . 
+. . . 1 1 1 1 1 1 1 1 1 1 . . . 
+. . 1 1 . . . 1 1 . . . 1 1 . . 
+. . 1 1 . 1 1 1 1 1 1 . 1 1 . . 
+. 1 1 . . . . 1 1 . . . . 1 1 . 
+. 1 1 . . 1 1 1 1 1 1 . . 1 f . 
+. 1 . . . . . 1 1 . . . . . f . 
+. . . . . 1 1 1 1 1 1 . . f f f 
+. . . . . 1 1 1 1 1 1 . . f f . 
+. . . . . 1 1 . . 1 1 . . . . . 
+. . . . . 1 1 . . 1 1 . . . . . 
+. . . . . 1 1 . . 1 1 . . . . . 
+`, SpriteKind.BOSS)
+    tiles.placeOnTile(Enemy3, tiles.getTileLocation(67, 0))
     game.showLongText("You have reached a second dungeon", DialogLayout.Full)
     game.showLongText("This will allow you to continue further and find the ultimate armour", DialogLayout.Full)
     game.showLongText("Your health will drop the further you tread", DialogLayout.Full)
@@ -1349,32 +1555,13 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.doorOpenNorth, function (
 . 2 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2 . . . . . 
 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 . . . . . 
 `,
-            [myTiles.tile0,myTiles.tile1,sprites.dungeon.greenOuterNorth0,sprites.dungeon.greenOuterNorthWest,sprites.dungeon.greenOuterWest0,sprites.dungeon.greenOuterSouthWest,sprites.dungeon.greenInnerNorthWest,sprites.dungeon.greenInnerSouthEast,sprites.dungeon.greenOuterNorthEast,sprites.dungeon.greenOuterEast0,sprites.dungeon.greenOuterSouthEast,sprites.dungeon.greenInnerSouthWest,sprites.dungeon.greenInnerNorthEast,sprites.dungeon.greenOuterSouth0,sprites.dungeon.greenOuterSouth1,sprites.dungeon.greenOuterNorth2,sprites.dungeon.greenOuterEast2,sprites.dungeon.greenOuterSouth2,sprites.dungeon.greenOuterWest2,sprites.dungeon.doorLockedSouth,sprites.dungeon.doorLockedNorth,sprites.dungeon.greenOuterNorth1,sprites.dungeon.darkGroundCenter,sprites.dungeon.greenSwitchDown,sprites.dungeon.greenSwitchUp,sprites.dungeon.floorLight0,sprites.dungeon.floorLight1,sprites.dungeon.floorDark3,sprites.dungeon.floorLight3,sprites.dungeon.floorMixed,sprites.dungeon.floorLight4,sprites.dungeon.greenOuterWest1],
+            [myTiles.tile0,myTiles.tile1,sprites.dungeon.greenOuterNorth0,sprites.dungeon.greenOuterNorthWest,sprites.dungeon.greenOuterWest0,sprites.dungeon.greenOuterSouthWest,sprites.dungeon.greenInnerNorthWest,sprites.dungeon.greenInnerSouthEast,sprites.dungeon.greenOuterNorthEast,sprites.dungeon.greenOuterEast0,sprites.dungeon.greenOuterSouthEast,sprites.dungeon.greenInnerSouthWest,sprites.dungeon.greenInnerNorthEast,sprites.dungeon.greenOuterSouth0,sprites.dungeon.greenOuterSouth1,sprites.dungeon.greenOuterNorth2,sprites.dungeon.greenOuterEast2,sprites.dungeon.greenOuterSouth2,sprites.dungeon.greenOuterWest2,sprites.dungeon.doorLockedSouth,sprites.dungeon.doorLockedNorth,sprites.dungeon.greenOuterNorth1,sprites.dungeon.darkGroundCenter,sprites.dungeon.greenSwitchDown,sprites.dungeon.greenSwitchUp,sprites.dungeon.floorLight0,sprites.dungeon.floorLight1,sprites.dungeon.floorDark3,sprites.dungeon.floorLight3,sprites.dungeon.floorMixed,sprites.dungeon.floorLight4,sprites.dungeon.greenOuterWest1,sprites.castle.tilePath5],
             TileScale.Sixteen
         ))
     tiles.placeOnTile(Zelda, tiles.getTileLocation(6, 4))
     for (let index = 0; index < 30; index++) {
         tiles.placeOnRandomTile(Enemy_2, sprites.dungeon.floorLight0)
     }
-    Enemy3 = sprites.create(img`
-. . . . . 1 1 1 1 1 1 . . . . . 
-. . . . . 1 f f f f 1 . . . . . 
-. . . . . 1 f d d f 1 . . . . . 
-. . . . . 1 d d d d 1 . . . . . 
-. . . . . 1 1 f f 1 1 . . . . . 
-. . . 1 1 1 1 1 1 1 1 1 1 . . . 
-. . 1 1 . . . 1 1 . . . 1 1 . . 
-. . 1 1 . 1 1 1 1 1 1 . 1 1 . . 
-. 1 1 . . . . 1 1 . . . . 1 1 . 
-. 1 1 . . 1 1 1 1 1 1 . . 1 f . 
-. 1 . . . . . 1 1 . . . . . f . 
-. . . . . 1 1 1 1 1 1 . . f f f 
-. . . . . 1 1 1 1 1 1 . . f f . 
-. . . . . 1 1 . . 1 1 . . . . . 
-. . . . . 1 1 . . 1 1 . . . . . 
-. . . . . 1 1 . . 1 1 . . . . . 
-`, SpriteKind.BOSS)
-    tiles.placeOnTile(Enemy3, tiles.getTileLocation(67, 0))
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     E_health = 3
@@ -1470,9 +1657,10 @@ f f 8 8 f f 9 8 8 6 8 f f . . . . . . . . . . .
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     direction = 2
-    animation.runImageAnimation(
-    Zelda,
-    [img`
+    if (wearing == 0) {
+        animation.runImageAnimation(
+        Zelda,
+        [img`
 . . . . . . f f f f f f . . . . 
 . . . . f f e e e e f 2 f . . . 
 . . . f f e e e e f 2 2 2 f . . 
@@ -1541,9 +1729,86 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
 . . . . f f f f f f f f f f . . 
 . . . . . f f . . . f f f . . . 
 `],
-    100,
-    true
-    )
+        100,
+        true
+        )
+    }
+    if (wearing == 1) {
+        animation.runImageAnimation(
+        Zelda,
+        [img`
+. . . . . . f f f f f f . . . . 
+. . . . f f e e e e b 5 f . . . 
+. . . f f e e e e b 5 5 5 f . . 
+. . . f e e e b b e e e e f . . 
+. . . f b b b e e 5 5 5 5 e f . 
+. . . f e 5 5 5 b b b b e 5 f . 
+. . f f b b b b b e e e f f f . 
+. . f f e 4 4 e b f 4 4 e e f . 
+. . f e e 4 d 4 1 f d d e f . . 
+. . . f e e e 4 d d d d f . . . 
+. . . . f f e e 4 4 4 e f . . . 
+. . . . . b d d c b c b f . . . 
+. . . . . c d d b c b c f . . . 
+. . . . . f b c f b c b f . . . 
+. . . . . . f f f f f f . . . . 
+. . . . . . . f f f . . . . . . 
+`,img`
+. . . . . . . . . . . . . . . . 
+. . . . . . f f f f f f . . . . 
+. . . . f f e e e e b 5 f . . . 
+. . . f f e e e e b 5 5 5 f . . 
+. . . f e e e b b e e e e f . . 
+. . . f b b b e e 5 5 5 5 e f . 
+. . . f e 5 5 5 b b b b e 5 f . 
+. . f f b b b b b e e e f f f . 
+. . f f e 4 4 e b f 4 4 e e f . 
+. . f e e 4 d 4 1 f d d e f . . 
+. . . f e e e e e d d d f . . . 
+. . . . . f b d d c b c f . . . 
+. . . . . f c d d b c b f . . . 
+. . . . f f f b c f b c f f . . 
+. . . . f f f f f f f f f f . . 
+. . . . . f f . . . f f f . . . 
+`,img`
+. . . . . . f f f f f f . . . . 
+. . . . f f e e e e b 5 f . . . 
+. . . f f e e e e b 5 5 5 f . . 
+. . . f e e e b b e e e e f . . 
+. . . f b b b e e 5 5 5 5 e f . 
+. . . f e 5 5 5 b b b b e 5 f . 
+. . f f b b b b b e e e f f f . 
+. . f f e 4 4 e b f 4 4 e e f . 
+. . f e e 4 d 4 1 f d d e f . . 
+. . . f e e e 4 d d d d f . . . 
+. . . . f f e e 4 4 4 e f . . . 
+. . . . . b d d c b c b f . . . 
+. . . . . c d d b c b c f . . . 
+. . . . . f b c f b c b f . . . 
+. . . . . . f f f f f f . . . . 
+. . . . . . . f f f . . . . . . 
+`,img`
+. . . . . . . . . . . . . . . . 
+. . . . . . f f f f f f . . . . 
+. . . . f f e e e e b 5 f . . . 
+. . . f f e e e e b 5 5 5 f . . 
+. . . f e e e b b e e e e f . . 
+. . . f b b b e e 5 5 5 5 e f . 
+. . . f e 5 5 5 b b b b e 5 f . 
+. . f f b b b b b e e e f f f . 
+. . f f e 4 4 e b f 4 4 e e f . 
+. . f e e 4 d 4 1 f d d e f . . 
+. . . f e e e 4 d d d d f . . . 
+. . . . b d d c b c b c f . . . 
+. . . . c d d b c b c b f . . . 
+. . . . f b c f b c b c f f . . 
+. . . . f f f f f f f f f f . . 
+. . . . . f f . . . f f f . . . 
+`],
+        100,
+        true
+        )
+    }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.ghost, function (sprite, otherSprite) {
     pause(1000)
@@ -1628,12 +1893,14 @@ let projectile: Sprite = null
 let Ruin: Sprite = null
 let direction = 0
 let statusbar = 0
+let armour: Sprite = null
 let Double_Gun: Sprite = null
 let Enemy3: Sprite = null
 let Zelda: Sprite = null
 let double = 0
 let double_weapon = 0
 let E_health = 0
+let wearing = 0
 let Boss_mode = 0
 let Enemy1: Sprite = null
 let Enemy_2: Sprite = null
@@ -1694,6 +1961,7 @@ Enemy1 = sprites.create(img`
 8 8 8 8 8 8 8 8 8 8 . . . . . . . . . . . . . . 
 `, SpriteKind.Enemy)
 Boss_mode = 0
+wearing = 0
 E_health = 3
 let ruins = 0
 double_weapon = 0
@@ -2141,5 +2409,8 @@ forever(function () {
         create_gohst_new(4, 49, 50, 1)
         create_gohst_new(10, 50, 50, 1)
         pause(10000)
+    }
+    if (Boss_mode == 2) {
+        Enemy3.follow(Zelda, 50)
     }
 })
